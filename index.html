@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>潭酒利润测算话术生成器</title>
+  <title>潭酒金算盘利润测算话术生成器</title>
   <style>
     :root {
-      --bg: #f6f4ef;
-      --ink: #27231f;
+      --bg: #f7f4ee;
+      --ink: #28231f;
       --muted: #6e6258;
       --line: #ded6ca;
       --panel: #fffaf2;
       --brand: #b3261e;
-      --brand-2: #d49a2f;
+      --gold: #d49a2f;
       --ok: #1f7a4d;
-      --shadow: 0 18px 55px rgba(76, 47, 21, .13);
       --tap: 48px;
+      --shadow: 0 18px 55px rgba(76, 47, 21, .13);
     }
 
     * { box-sizing: border-box; }
@@ -42,7 +42,7 @@
       align-items: flex-end;
       justify-content: space-between;
       gap: 20px;
-      padding: 0 0 18px;
+      padding-bottom: 18px;
     }
 
     h1 {
@@ -70,27 +70,27 @@
 
     main {
       display: grid;
-      grid-template-columns: minmax(320px, 410px) 1fr;
+      grid-template-columns: minmax(320px, 420px) 1fr;
       gap: 18px;
       align-items: start;
     }
 
     section {
-      background: rgba(255, 250, 242, .88);
+      background: rgba(255, 250, 242, .9);
       border: 1px solid var(--line);
       border-radius: 8px;
       box-shadow: var(--shadow);
     }
 
-    .form-panel { padding: 22px; }
-    .result-panel { padding: 22px; min-height: 620px; }
+    .form-panel, .result-panel { padding: 22px; }
+    .result-panel { min-height: 640px; }
 
     .section-title {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     h2 {
@@ -132,24 +132,26 @@
     }
 
     textarea {
-      min-height: 360px;
+      min-height: 390px;
       resize: vertical;
       padding: 14px;
       line-height: 1.65;
     }
 
     input:focus, select:focus, textarea:focus {
-      border-color: var(--brand-2);
+      border-color: var(--gold);
       box-shadow: 0 0 0 3px rgba(212, 154, 47, .18);
     }
 
-    .segmented {
+    .segmented, .series-tabs {
       display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
 
-    .segmented button, .actions button {
+    .segmented { grid-template-columns: 1fr 1fr; }
+    .series-tabs { grid-template-columns: 1fr 1fr; margin-bottom: 16px; }
+
+    .segmented button, .series-tabs button, .actions button, .mini-button {
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
@@ -162,9 +164,11 @@
       transition: transform .15s ease, border-color .15s ease, background .15s ease, color .15s ease;
     }
 
-    .segmented button:hover, .actions button:hover { transform: translateY(-1px); }
+    .segmented button:hover, .series-tabs button:hover, .actions button:hover, .mini-button:hover {
+      transform: translateY(-1px);
+    }
 
-    .segmented button.active {
+    .segmented button.active, .series-tabs button.active {
       border-color: var(--brand);
       background: var(--brand);
       color: #fff;
@@ -176,7 +180,7 @@
       gap: 12px;
     }
 
-    .banquet-box {
+    .price-box, .banquet-box {
       display: grid;
       gap: 12px;
       border: 1px dashed #cdbfaccf;
@@ -184,6 +188,21 @@
       padding: 14px;
       background: rgba(255, 255, 255, .58);
       margin-bottom: 16px;
+    }
+
+    .box-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .box-head strong { font-size: 14px; }
+
+    .mini-button {
+      min-height: 34px;
+      padding: 0 10px;
+      font-size: 13px;
     }
 
     .toggle {
@@ -332,9 +351,8 @@
       .section-title { margin-bottom: 14px; }
       h2 { font-size: 18px; }
       .grid-2, .actions, .summary-grid { grid-template-columns: 1fr; }
-      .badge { white-space: normal; }
       .field { margin-bottom: 12px; }
-      textarea { min-height: 430px; font-size: 15px; }
+      textarea { min-height: 450px; font-size: 15px; }
       .metric { min-height: 76px; padding: 12px; }
       .metric strong { font-size: 24px; }
     }
@@ -344,10 +362,10 @@
   <div class="app-shell">
     <header>
       <div>
-        <h1>潭酒利润测算话术生成器</h1>
-        <p class="subhead">输入门店、产品和动销信息，一键生成业务员可直接转发的话术。</p>
+        <h1>潭酒金算盘利润测算话术生成器</h1>
+        <p class="subhead">切换系列，选择产品，默认价格可手动调整，自动生成利润测算话术。</p>
       </div>
-      <div class="badge">真年份金算盘</div>
+      <div class="badge">真年份 / 潭1935</div>
     </header>
 
     <main>
@@ -355,6 +373,11 @@
         <div class="section-title">
           <h2>测算信息</h2>
           <span class="hint">自动实时计算</span>
+        </div>
+
+        <div class="series-tabs" role="tablist" aria-label="产品系列">
+          <button type="button" class="active" data-series="vintage">真年份系列</button>
+          <button type="button" data-series="tan1935">潭1935系列</button>
         </div>
 
         <div class="field">
@@ -373,6 +396,23 @@
         <div class="field">
           <label for="product">产品</label>
           <select id="product"></select>
+        </div>
+
+        <div class="price-box">
+          <div class="box-head">
+            <strong>进销价</strong>
+            <button class="mini-button" type="button" id="restorePriceBtn">恢复默认</button>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="costPrice">进货价</label>
+              <input id="costPrice" type="number" min="0" step="0.01" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="retailPrice">零售价</label>
+              <input id="retailPrice" type="number" min="0" step="0.01" inputmode="decimal">
+            </div>
+          </div>
         </div>
 
         <div class="grid-2">
@@ -449,52 +489,41 @@
   </div>
 
   <script>
-    const productData = [
-      { id: "red53", name: "53°红潭", family: "红潭", retail: 238, sloganRegular: "走红毯，喝红潭，生活最有仪式感！", sloganDeposit: "保证金模式更赚钱！走红毯，喝红潭，生活最有仪式感！", prices: { regular: { cost: 190, scan: 25 }, deposit: { cost: 184, scan: 30 } } },
-      { id: "gold53", name: "53°潭金酱", family: "潭金酱", retail: 150, sloganRegular: "潭金酱，200元以内酱酒品质典范！", sloganDeposit: "保证金模式更赚钱！潭金酱，200元以内酱酒性价比典范！", prices: { regular: { cost: 121, scan: 20 }, deposit: { cost: 117, scan: 25 } } },
-      { id: "silver53", name: "53°银潭", family: "银潭", retail: 100, sloganRegular: "百元酱酒，首推银潭！", sloganDeposit: "保证金模式更赚钱！百元酱酒，首推银潭！", prices: { regular: { cost: 85, scan: 16 }, deposit: { cost: 82, scan: 20 } } },
-      { id: "red39", name: "39°红潭", family: "红潭", retail: 220, sloganRegular: "走红毯，喝红潭，生活最有仪式感！", sloganDeposit: "保证金模式更赚钱！走红毯，喝红潭，生活最有仪式感！", prices: { regular: { cost: 175, scan: 21 }, deposit: { cost: 168, scan: 27 } } },
-      { id: "gold39", name: "39°潭金酱", family: "潭金酱", retail: 130, sloganRegular: "潭金酱，200元以内酱酒品质典范！", sloganDeposit: "保证金模式更赚钱！潭金酱，200元以内酱酒性价比典范！", prices: { regular: { cost: 108, scan: 17 }, deposit: { cost: 104, scan: 20 } } },
-      { id: "silver39", name: "39°银潭", family: "银潭", retail: 95, sloganRegular: "百元酱酒，首推银潭！", sloganDeposit: "保证金模式更赚钱！百元酱酒，首推银潭！", prices: { regular: { cost: 81, scan: 13 }, deposit: { cost: 78, scan: 15 } } }
-    ];
-
-    const banquetRules = {
-      "银潭": {
-        baseFee: 15,
-        bonusFee: 30,
-        tiers: [
-          { minTables: 30, minBottles: 48, label: "30桌及以上" },
-          { minTables: 10, minBottles: 30, label: "10桌及以上" },
-          { minTables: 3, minBottles: 18, label: "3桌及以上" },
-          { minTables: 1, minBottles: 6, label: "不足三桌" }
+    const seriesData = {
+      vintage: {
+        label: "真年份系列",
+        products: [
+          { id: "red53", name: "53°红潭", family: "红潭", retail: 238, sloganRegular: "走红毯，喝红潭，生活最有仪式感！", sloganDeposit: "保证金模式更赚钱！走红毯，喝红潭，生活最有仪式感！", prices: { regular: { cost: 190, scan: 25 }, deposit: { cost: 184, scan: 30 } } },
+          { id: "gold53", name: "53°潭金酱", family: "潭金酱", retail: 150, sloganRegular: "潭金酱，200元以内酱酒品质典范！", sloganDeposit: "保证金模式更赚钱！潭金酱，200元以内酱酒性价比典范！", prices: { regular: { cost: 121, scan: 20 }, deposit: { cost: 117, scan: 25 } } },
+          { id: "silver53", name: "53°银潭", family: "银潭", retail: 100, sloganRegular: "百元酱酒，首推银潭！", sloganDeposit: "保证金模式更赚钱！百元酱酒，首推银潭！", prices: { regular: { cost: 85, scan: 16 }, deposit: { cost: 82, scan: 20 } } },
+          { id: "red39", name: "39°红潭", family: "红潭", retail: 220, sloganRegular: "走红毯，喝红潭，生活最有仪式感！", sloganDeposit: "保证金模式更赚钱！走红毯，喝红潭，生活最有仪式感！", prices: { regular: { cost: 175, scan: 21 }, deposit: { cost: 168, scan: 27 } } },
+          { id: "gold39", name: "39°潭金酱", family: "潭金酱", retail: 130, sloganRegular: "潭金酱，200元以内酱酒品质典范！", sloganDeposit: "保证金模式更赚钱！潭金酱，200元以内酱酒性价比典范！", prices: { regular: { cost: 108, scan: 17 }, deposit: { cost: 104, scan: 20 } } },
+          { id: "silver39", name: "39°银潭", family: "银潭", retail: 95, sloganRegular: "百元酱酒，首推银潭！", sloganDeposit: "保证金模式更赚钱！百元酱酒，首推银潭！", prices: { regular: { cost: 81, scan: 13 }, deposit: { cost: 78, scan: 15 } } }
         ]
       },
-      "潭金酱": {
-        baseFee: 20,
-        bonusFee: 40,
-        tiers: [
-          { minTables: 30, minBottles: 42, label: "30桌及以上" },
-          { minTables: 10, minBottles: 24, label: "10桌及以上" },
-          { minTables: 3, minBottles: 12, label: "3桌及以上" },
-          { minTables: 1, minBottles: 6, label: "不足三桌" }
-        ]
-      },
-      "红潭": {
-        baseFee: 40,
-        bonusFee: 80,
-        extraGift: "15桌以上奖励门店1瓶1L红潭",
-        tiers: [
-          { minTables: 30, minBottles: 36, label: "30桌及以上" },
-          { minTables: 10, minBottles: 18, label: "10桌及以上" },
-          { minTables: 3, minBottles: 9, label: "3桌及以上" },
-          { minTables: 1, minBottles: 6, label: "不足三桌" }
+      tan1935: {
+        label: "潭1935系列",
+        products: [
+          { id: "white1935", name: "39°&53°潭1935小白潭", family: "小白潭", retail: 60, sloganRegular: "百元酱酒，首推1935小白潭！", sloganDeposit: "百元酱酒，首推1935小白潭！", prices: { regular: { cost: 50, scan: 7 }, deposit: { cost: 50, scan: 7 } } },
+          { id: "red1935_53", name: "53°潭1935小红潭", family: "小红潭", retail: 110, sloganRegular: "办宴席，首推1935小红潭！", sloganDeposit: "办宴席，首推1935小红潭！", prices: { regular: { cost: 86, scan: 7 }, deposit: { cost: 86, scan: 7 } } },
+          { id: "red1935_39", name: "39°潭1935小红潭", family: "小红潭", retail: 105, sloganRegular: "办宴席，首推1935小红潭！", sloganDeposit: "办宴席，首推1935小红潭！", prices: { regular: { cost: 82, scan: 7 }, deposit: { cost: 82, scan: 7 } } }
         ]
       }
+    };
+
+    const banquetRules = {
+      "银潭": { baseFee: 15, bonusFee: 30, extraGift: "", tiers: [{ minTables: 30, minBottles: 48 }, { minTables: 10, minBottles: 30 }, { minTables: 3, minBottles: 18 }, { minTables: 1, minBottles: 6 }] },
+      "潭金酱": { baseFee: 20, bonusFee: 40, extraGift: "", tiers: [{ minTables: 30, minBottles: 42 }, { minTables: 10, minBottles: 24 }, { minTables: 3, minBottles: 12 }, { minTables: 1, minBottles: 6 }] },
+      "红潭": { baseFee: 40, bonusFee: 80, extraGift: "15桌以上奖励门店1瓶1L红潭", tiers: [{ minTables: 30, minBottles: 36 }, { minTables: 10, minBottles: 18 }, { minTables: 3, minBottles: 9 }, { minTables: 1, minBottles: 6 }] },
+      "小白潭": { baseFee: 10, bonusFee: 20, extraGift: "", tiers: [{ minTables: 30, minBottles: 36 }, { minTables: 10, minBottles: 24 }, { minTables: 3, minBottles: 12 }, { minTables: 1, minBottles: 6 }] },
+      "小红潭": { baseFee: 20, bonusFee: 40, extraGift: "", tiers: [{ minTables: 30, minBottles: 36 }, { minTables: 10, minBottles: 24 }, { minTables: 3, minBottles: 12 }, { minTables: 1, minBottles: 6 }] }
     };
 
     const els = {
       storeName: document.getElementById("storeName"),
       product: document.getElementById("product"),
+      costPrice: document.getElementById("costPrice"),
+      retailPrice: document.getElementById("retailPrice"),
       soldBottles: document.getElementById("soldBottles"),
       openedBottles: document.getElementById("openedBottles"),
       isBanquet: document.getElementById("isBanquet"),
@@ -512,23 +541,54 @@
       toast: document.getElementById("toast")
     };
 
+    let currentSeries = "vintage";
     let storeType = "regular";
 
     function yuan(value) {
-      return `${Number(value || 0).toLocaleString("zh-CN")} 元`;
+      return `${Number(value || 0).toLocaleString("zh-CN", { maximumFractionDigits: 2 })} 元`;
+    }
+
+    function cleanNumber(value) {
+      return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
     }
 
     function numberValue(el) {
       return Math.max(0, Math.floor(Number(el.value) || 0));
     }
 
+    function moneyValue(el) {
+      return Math.max(0, Number(el.value) || 0);
+    }
+
+    function getProducts() {
+      return seriesData[currentSeries].products;
+    }
+
     function getSelectedProduct() {
-      return productData.find(item => item.id === els.product.value) || productData[0];
+      return getProducts().find(item => item.id === els.product.value) || getProducts()[0];
+    }
+
+    function getDefaultPrice(product) {
+      const price = product.prices[storeType] || product.prices.regular;
+      return { cost: price.cost, retail: product.retail, scan: price.scan };
+    }
+
+    function fillProducts() {
+      els.product.innerHTML = getProducts().map(item => `<option value="${item.id}">${item.name}</option>`).join("");
+      restoreDefaultPrice();
+    }
+
+    function restoreDefaultPrice() {
+      const product = getSelectedProduct();
+      const defaults = getDefaultPrice(product);
+      els.costPrice.value = defaults.cost;
+      els.retailPrice.value = defaults.retail;
+      buildScript();
     }
 
     function calcBanquet(product, soldBottles, tables, enabled, doubleFeeEnabled) {
       if (!enabled || tables <= 0) {
-        return { amount: 0, fee: 0, tier: null, message: "本单未选择宴席奖励。" };
+        return { amount: 0, fee: 0, tier: null, message: "本单没有算宴席奖励。" };
       }
 
       const rule = banquetRules[product.family];
@@ -539,17 +599,16 @@
           amount: 0,
           fee: 0,
           tier: null,
-          message: `${tables}桌宴席暂未满足${product.family}看桌费用酒要求，当前不计宴席奖励。`
+          message: `${tables}桌宴席目前用酒数量还不够看桌费要求，这部分奖励先不算。`
         };
       }
 
       const canDouble = tables >= 3;
       const fee = doubleFeeEnabled && canDouble ? rule.bonusFee : rule.baseFee;
       const amount = fee * tables;
-      const gift = product.family === "红潭" && tables >= 15 ? `，另有${rule.extraGift}` : "";
-      const feeText = doubleFeeEnabled && canDouble
-        ? "看桌费按翻倍算"
-        : "还能拿看桌费";
+      const gift = rule.extraGift && tables >= 15 ? `，另外还有${rule.extraGift}` : "";
+      const feeText = doubleFeeEnabled && canDouble ? "看桌费按翻倍算" : "还能拿看桌费";
+
       return {
         amount,
         fee,
@@ -561,57 +620,75 @@
     function buildScript() {
       const storeName = els.storeName.value.trim() || "本门店";
       const product = getSelectedProduct();
-      const mode = product.prices[storeType];
+      const defaults = getDefaultPrice(product);
+      const cost = moneyValue(els.costPrice);
+      const retail = moneyValue(els.retailPrice);
+      const scan = defaults.scan;
       const storeTypeName = storeType === "deposit" ? "保证金网点" : "普通网点";
       const sold = numberValue(els.soldBottles);
       const opened = numberValue(els.openedBottles);
       const tables = numberValue(els.tables);
-      const margin = product.retail - mode.cost;
+      const margin = retail - cost;
       const marginProfit = margin * sold;
-      const scanProfit = mode.scan * opened;
+      const scanProfit = scan * opened;
       const banquet = calcBanquet(product, sold, tables, els.isBanquet.checked, els.isDoubleFee.checked);
       const total = marginProfit + scanProfit + banquet.amount;
-      const perBottleIfOpened = margin + mode.scan;
+      const perBottleIfOpened = margin + scan;
       const slogan = storeType === "deposit" ? product.sloganDeposit : product.sloganRegular;
+      const customText = (cost !== defaults.cost || retail !== defaults.retail) ? "（本次按门店实际进销价测算）" : "";
 
-      els.modeLabel.textContent = storeTypeName;
+      els.modeLabel.textContent = `${seriesData[currentSeries].label} · ${storeTypeName}`;
       els.marginProfit.textContent = yuan(marginProfit);
       els.scanProfit.textContent = yuan(scanProfit);
       els.banquetProfit.textContent = yuan(banquet.amount);
       els.totalProfit.textContent = yuan(total);
       els.formulaText.innerHTML =
-        `${product.name}：零售价${product.retail}元，进货价${mode.cost}元，单瓶顺差${margin}元；开瓶红包均值${mode.scan}元。<br>` +
-        `本单合计 = ${margin}×${sold} + ${mode.scan}×${opened} + ${banquet.amount} = ${total}元。`;
+        `${product.name}：零售价${cleanNumber(retail)}元，进货价${cleanNumber(cost)}元，单瓶顺差${cleanNumber(margin)}元；开瓶红包均值${scan}元。<br>` +
+        `本单合计 = ${cleanNumber(margin)}×${sold} + ${scan}×${opened} + ${cleanNumber(banquet.amount)} = ${cleanNumber(total)}元。`;
 
       const lines = [
         `${storeName}${storeTypeName}${product.name}利润测算：`,
         "",
-        `${product.name}进货价${mode.cost}元（${storeTypeName}），零售价按${product.retail}元，单瓶顺差${product.retail}-${mode.cost}=${margin}元。`,
-        `消费者开瓶扫码后反向红包均值${mode.scan}元，单瓶开瓶后合计利润${margin}+${mode.scan}=${perBottleIfOpened}元。`,
+        `${product.name}进货价${cleanNumber(cost)}元，零售价按${cleanNumber(retail)}元，单瓶顺差${cleanNumber(retail)}-${cleanNumber(cost)}=${cleanNumber(margin)}元${customText}。`,
+        `消费者开瓶扫码后反向红包均值${scan}元，单瓶开瓶后合计利润${cleanNumber(margin)}+${scan}=${cleanNumber(perBottleIfOpened)}元。`,
         "",
-        `本单动销${sold}瓶，顺差利润${margin}×${sold}=${marginProfit}元。`,
-        `本单开瓶${opened}瓶，开瓶红包${mode.scan}×${opened}=${scanProfit}元。`,
+        `本单动销${sold}瓶，顺差利润${cleanNumber(margin)}×${sold}=${cleanNumber(marginProfit)}元。`,
+        `本单开瓶${opened}瓶，开瓶红包${scan}×${opened}=${cleanNumber(scanProfit)}元。`,
         banquet.message,
         "",
-        `这一单合计利润：${marginProfit}+${scanProfit}+${banquet.amount}=${total}元。`,
-        `相当于卖了${sold}瓶${product.family}，到手${total}元利润。`,
+        `这一单合计利润：${cleanNumber(marginProfit)}+${cleanNumber(scanProfit)}+${cleanNumber(banquet.amount)}=${cleanNumber(total)}元。`,
+        `相当于卖了${sold}瓶${product.family}，到手${cleanNumber(total)}元利润。`,
         slogan
       ];
 
       els.scriptOutput.value = lines.join("\n");
     }
 
+    function setSeries(series) {
+      currentSeries = series;
+      document.querySelectorAll("[data-series]").forEach(btn => btn.classList.toggle("active", btn.dataset.series === series));
+      fillProducts();
+    }
+
     function init() {
-      els.product.innerHTML = productData.map(item => `<option value="${item.id}">${item.name}</option>`).join("");
+      fillProducts();
+
+      document.querySelectorAll("[data-series]").forEach(button => {
+        button.addEventListener("click", () => setSeries(button.dataset.series));
+      });
+
       document.querySelectorAll("[data-store-type]").forEach(button => {
         button.addEventListener("click", () => {
           storeType = button.dataset.storeType;
           document.querySelectorAll("[data-store-type]").forEach(btn => btn.classList.toggle("active", btn === button));
-          buildScript();
+          restoreDefaultPrice();
         });
       });
 
-      [els.storeName, els.product, els.soldBottles, els.openedBottles, els.tables, els.isBanquet, els.isDoubleFee].forEach(el => {
+      els.product.addEventListener("change", restoreDefaultPrice);
+      document.getElementById("restorePriceBtn").addEventListener("click", restoreDefaultPrice);
+
+      [els.storeName, els.costPrice, els.retailPrice, els.soldBottles, els.openedBottles, els.tables, els.isBanquet, els.isDoubleFee].forEach(el => {
         el.addEventListener("input", buildScript);
         el.addEventListener("change", buildScript);
       });
@@ -635,7 +712,7 @@
         els.isDoubleFee.checked = false;
         els.tableField.hidden = true;
         els.doubleFeeField.hidden = true;
-        buildScript();
+        restoreDefaultPrice();
       });
 
       document.getElementById("copyBtn").addEventListener("click", async () => {
