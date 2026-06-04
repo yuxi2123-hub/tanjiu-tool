@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>潭酒利润测算话术生成器</title>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --ink: #27231f;
+      --muted: #6e6258;
+      --line: #ded6ca;
+      --panel: #fffaf2;
+      --brand: #b3261e;
+      --brand-2: #d49a2f;
+      --ok: #1f7a4d;
+      --shadow: 0 18px 55px rgba(76, 47, 21, .13);
+      --tap: 48px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        linear-gradient(135deg, rgba(179, 38, 30, .08), transparent 34%),
+        linear-gradient(315deg, rgba(212, 154, 47, .13), transparent 36%),
+        var(--bg);
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 34px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 0 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 42px);
+      letter-spacing: 0;
+      line-height: 1.12;
+    }
+
+    .subhead {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      color: #fff;
+      background: var(--brand);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(179, 38, 30, .22);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(320px, 410px) 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    section {
+      background: rgba(255, 250, 242, .88);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-panel { padding: 22px; }
+    .result-panel { padding: 22px; min-height: 620px; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+      transition: border-color .16s ease, box-shadow .16s ease;
+    }
+
+    input, select {
+      height: var(--tap);
+      padding: 0 12px;
+    }
+
+    textarea {
+      min-height: 360px;
+      resize: vertical;
+      padding: 14px;
+      line-height: 1.65;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--brand-2);
+      box-shadow: 0 0 0 3px rgba(212, 154, 47, .18);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .segmented button, .actions button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      min-height: var(--tap);
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease, color .15s ease;
+    }
+
+    .segmented button:hover, .actions button:hover { transform: translateY(-1px); }
+
+    .segmented button.active {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .banquet-box {
+      display: grid;
+      gap: 12px;
+      border: 1px dashed #cdbfaccf;
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(255, 255, 255, .58);
+      margin-bottom: 16px;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .switch {
+      position: relative;
+      width: 54px;
+      height: 30px;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #d7cdc0;
+      border-radius: 999px;
+      transition: background .16s ease;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      transition: transform .16s ease;
+    }
+
+    .switch input:checked + .slider { background: var(--brand); }
+    .switch input:checked + .slider:before { transform: translateX(24px); }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .actions .primary {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 13px;
+      min-height: 82px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .metric.total {
+      border-color: rgba(31, 122, 77, .35);
+      background: rgba(31, 122, 77, .08);
+    }
+
+    .formula {
+      border: 1px solid rgba(212, 154, 47, .45);
+      background: rgba(212, 154, 47, .1);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #5b3a10;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .copy-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .copy-row button {
+      border: 1px solid var(--brand);
+      border-radius: 8px;
+      background: var(--brand);
+      color: #fff;
+      height: 40px;
+      padding: 0 14px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .toast {
+      min-height: 22px;
+      color: var(--ok);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    @media (max-width: 900px) {
+      header { align-items: flex-start; flex-direction: column; }
+      main { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .result-panel { min-height: auto; }
+    }
+
+    @media (max-width: 520px) {
+      :root { --tap: 50px; }
+      body { background: var(--bg); }
+      .app-shell { width: min(100% - 16px, 1180px); padding-top: 14px; }
+      header { gap: 12px; padding-bottom: 14px; }
+      h1 { font-size: 26px; }
+      .subhead { font-size: 14px; line-height: 1.55; }
+      .badge { padding: 8px 12px; font-size: 13px; }
+      main { gap: 12px; }
+      .form-panel, .result-panel { padding: 14px; }
+      .section-title { margin-bottom: 14px; }
+      h2 { font-size: 18px; }
+      .grid-2, .actions, .summary-grid { grid-template-columns: 1fr; }
+      .badge { white-space: normal; }
+      .field { margin-bottom: 12px; }
+      textarea { min-height: 430px; font-size: 15px; }
+      .metric { min-height: 76px; padding: 12px; }
+      .metric strong { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div>
+        <h1>潭酒利润测算话术生成器</h1>
+        <p class="subhead">输入门店、产品和动销信息，一键生成业务员可直接转发的话术。</p>
+      </div>
+      <div class="badge">真年份金算盘</div>
+    </header>
+
+    <main>
+      <section class="form-panel" aria-label="测算表单">
+        <div class="section-title">
+          <h2>测算信息</h2>
+          <span class="hint">自动实时计算</span>
+        </div>
+
+        <div class="field">
+          <label for="storeName">门店名称</label>
+          <input id="storeName" placeholder="例如：张老板烟酒行" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label>门店类型</label>
+          <div class="segmented" role="group" aria-label="门店类型">
+            <button type="button" class="active" data-store-type="regular">普通网点</button>
+            <button type="button" data-store-type="deposit">保证金网点</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="product">产品</label>
+          <select id="product"></select>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="soldBottles">动销瓶数</label>
+            <input id="soldBottles" type="number" min="0" step="1" value="0" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="openedBottles">开瓶数</label>
+            <input id="openedBottles" type="number" min="0" step="1" value="0" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="banquet-box">
+          <div class="toggle">
+            <label for="isBanquet">是否宴席</label>
+            <label class="switch" aria-label="是否宴席">
+              <input id="isBanquet" type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="field" id="tableField" hidden>
+            <label for="tables">宴席桌数</label>
+            <input id="tables" type="number" min="0" step="1" value="0" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="button" id="generateBtn">生成话术</button>
+          <button type="button" id="resetBtn">清空重填</button>
+        </div>
+      </section>
+
+      <section class="result-panel" aria-label="测算结果">
+        <div class="section-title">
+          <h2>利润测算结果</h2>
+          <span class="hint" id="modeLabel">普通网点</span>
+        </div>
+
+        <div class="summary-grid">
+          <div class="metric">
+            <span>顺差利润</span>
+            <strong id="marginProfit">0 元</strong>
+          </div>
+          <div class="metric">
+            <span>开瓶红包</span>
+            <strong id="scanProfit">0 元</strong>
+          </div>
+          <div class="metric">
+            <span>宴席奖励</span>
+            <strong id="banquetProfit">0 元</strong>
+          </div>
+          <div class="metric total">
+            <span>合计利润</span>
+            <strong id="totalProfit">0 元</strong>
+          </div>
+        </div>
+
+        <div class="formula" id="formulaText"></div>
+        <textarea id="scriptOutput" readonly></textarea>
+        <div class="copy-row">
+          <span class="toast" id="toast"></span>
+          <button type="button" id="copyBtn">复制话术</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const productData = [
+      { id: "red53", name: "53°红潭", family: "红潭", retail: 238, sloganRegular: "走红毯，喝红潭，生活最有仪式感！", sloganDeposit: "保证金模式更赚钱！走红毯，喝红潭，生活最有仪式感！", prices: { regular: { cost: 190, scan: 25 }, deposit: { cost: 184, scan: 30 } } },
+      { id: "gold53", name: "53°潭金酱", family: "潭金酱", retail: 150, sloganRegular: "潭金酱，200元以内酱酒品质典范！", sloganDeposit: "保证金模式更赚钱！潭金酱，200元以内酱酒性价比典范！", prices: { regular: { cost: 121, scan: 20 }, deposit: { cost: 117, scan: 25 } } },
+      { id: "silver53", name: "53°银潭", family: "银潭", retail: 100, sloganRegular: "百元酱酒，首推银潭！", sloganDeposit: "保证金模式更赚钱！百元酱酒，首推银潭！", prices: { regular: { cost: 85, scan: 16 }, deposit: { cost: 82, scan: 20 } } },
+      { id: "red39", name: "39°红潭", family: "红潭", retail: 220, sloganRegular: "走红毯，喝红潭，生活最有仪式感！", sloganDeposit: "保证金模式更赚钱！走红毯，喝红潭，生活最有仪式感！", prices: { regular: { cost: 175, scan: 21 }, deposit: { cost: 168, scan: 27 } } },
+      { id: "gold39", name: "39°潭金酱", family: "潭金酱", retail: 130, sloganRegular: "潭金酱，200元以内酱酒品质典范！", sloganDeposit: "保证金模式更赚钱！潭金酱，200元以内酱酒性价比典范！", prices: { regular: { cost: 108, scan: 17 }, deposit: { cost: 104, scan: 20 } } },
+      { id: "silver39", name: "39°银潭", family: "银潭", retail: 95, sloganRegular: "百元酱酒，首推银潭！", sloganDeposit: "保证金模式更赚钱！百元酱酒，首推银潭！", prices: { regular: { cost: 81, scan: 13 }, deposit: { cost: 78, scan: 15 } } }
+    ];
+
+    const banquetRules = {
+      "银潭": {
+        baseFee: 15,
+        bonusFee: 30,
+        tiers: [
+          { minTables: 30, minBottles: 48, label: "30桌及以上" },
+          { minTables: 10, minBottles: 30, label: "10桌及以上" },
+          { minTables: 3, minBottles: 18, label: "3桌及以上" },
+          { minTables: 1, minBottles: 6, label: "不足三桌" }
+        ]
+      },
+      "潭金酱": {
+        baseFee: 20,
+        bonusFee: 40,
+        tiers: [
+          { minTables: 30, minBottles: 42, label: "30桌及以上" },
+          { minTables: 10, minBottles: 24, label: "10桌及以上" },
+          { minTables: 3, minBottles: 12, label: "3桌及以上" },
+          { minTables: 1, minBottles: 6, label: "不足三桌" }
+        ]
+      },
+      "红潭": {
+        baseFee: 40,
+        bonusFee: 80,
+        extraGift: "15桌以上奖励门店1瓶1L红潭",
+        tiers: [
+          { minTables: 30, minBottles: 36, label: "30桌及以上" },
+          { minTables: 10, minBottles: 18, label: "10桌及以上" },
+          { minTables: 3, minBottles: 9, label: "3桌及以上" },
+          { minTables: 1, minBottles: 6, label: "不足三桌" }
+        ]
+      }
+    };
+
+    const els = {
+      storeName: document.getElementById("storeName"),
+      product: document.getElementById("product"),
+      soldBottles: document.getElementById("soldBottles"),
+      openedBottles: document.getElementById("openedBottles"),
+      isBanquet: document.getElementById("isBanquet"),
+      tables: document.getElementById("tables"),
+      tableField: document.getElementById("tableField"),
+      modeLabel: document.getElementById("modeLabel"),
+      marginProfit: document.getElementById("marginProfit"),
+      scanProfit: document.getElementById("scanProfit"),
+      banquetProfit: document.getElementById("banquetProfit"),
+      totalProfit: document.getElementById("totalProfit"),
+      formulaText: document.getElementById("formulaText"),
+      scriptOutput: document.getElementById("scriptOutput"),
+      toast: document.getElementById("toast")
+    };
+
+    let storeType = "regular";
+
+    function yuan(value) {
+      return `${Number(value || 0).toLocaleString("zh-CN")} 元`;
+    }
+
+    function numberValue(el) {
+      return Math.max(0, Math.floor(Number(el.value) || 0));
+    }
+
+    function getSelectedProduct() {
+      return productData.find(item => item.id === els.product.value) || productData[0];
+    }
+
+    function calcBanquet(product, soldBottles, tables, enabled) {
+      if (!enabled || tables <= 0) {
+        return { amount: 0, fee: 0, tier: null, message: "本单未选择宴席奖励。" };
+      }
+
+      const rule = banquetRules[product.family];
+      const tier = rule.tiers.find(item => tables >= item.minTables && soldBottles >= item.minBottles);
+
+      if (!tier) {
+        return {
+          amount: 0,
+          fee: 0,
+          tier: null,
+          message: `${tables}桌宴席暂未满足${product.family}看桌费用酒要求，当前不计宴席奖励。`
+        };
+      }
+
+      const fee = tier.minTables >= 3 ? rule.bonusFee : rule.baseFee;
+      const amount = fee * tables;
+      const gift = product.family === "红潭" && tables >= 15 ? `，另有${rule.extraGift}` : "";
+      return {
+        amount,
+        fee,
+        tier,
+        message: `${product.family}宴席${tables}桌，匹配${tier.label}规则，看桌费${fee}元/桌，宴席奖励${fee}×${tables}=${amount}元${gift}。`
+      };
+    }
+
+    function buildScript() {
+      const storeName = els.storeName.value.trim() || "本门店";
+      const product = getSelectedProduct();
+      const mode = product.prices[storeType];
+      const storeTypeName = storeType === "deposit" ? "保证金网点" : "普通网点";
+      const sold = numberValue(els.soldBottles);
+      const opened = numberValue(els.openedBottles);
+      const tables = numberValue(els.tables);
+      const margin = product.retail - mode.cost;
+      const marginProfit = margin * sold;
+      const scanProfit = mode.scan * opened;
+      const banquet = calcBanquet(product, sold, tables, els.isBanquet.checked);
+      const total = marginProfit + scanProfit + banquet.amount;
+      const perBottleIfOpened = margin + mode.scan;
+      const slogan = storeType === "deposit" ? product.sloganDeposit : product.sloganRegular;
+
+      els.modeLabel.textContent = storeTypeName;
+      els.marginProfit.textContent = yuan(marginProfit);
+      els.scanProfit.textContent = yuan(scanProfit);
+      els.banquetProfit.textContent = yuan(banquet.amount);
+      els.totalProfit.textContent = yuan(total);
+      els.formulaText.innerHTML =
+        `${product.name}：零售价${product.retail}元，进货价${mode.cost}元，单瓶顺差${margin}元；开瓶红包均值${mode.scan}元。<br>` +
+        `本单合计 = ${margin}×${sold} + ${mode.scan}×${opened} + ${banquet.amount} = ${total}元。`;
+
+      const lines = [
+        `${storeName}${storeTypeName}${product.name}利润测算：`,
+        "",
+        `${product.name}进货价${mode.cost}元（${storeTypeName}），零售价按${product.retail}元，单瓶顺差${product.retail}-${mode.cost}=${margin}元。`,
+        `消费者开瓶扫码后反向红包均值${mode.scan}元，单瓶开瓶后合计利润${margin}+${mode.scan}=${perBottleIfOpened}元。`,
+        "",
+        `本单动销${sold}瓶，顺差利润${margin}×${sold}=${marginProfit}元。`,
+        `本单开瓶${opened}瓶，开瓶红包${mode.scan}×${opened}=${scanProfit}元。`,
+        banquet.message,
+        "",
+        `这一单合计利润：${marginProfit}+${scanProfit}+${banquet.amount}=${total}元。`,
+        `相当于卖了${sold}瓶${product.family}，到手${total}元利润。`,
+        slogan
+      ];
+
+      els.scriptOutput.value = lines.join("\n");
+    }
+
+    function init() {
+      els.product.innerHTML = productData.map(item => `<option value="${item.id}">${item.name}</option>`).join("");
+      document.querySelectorAll("[data-store-type]").forEach(button => {
+        button.addEventListener("click", () => {
+          storeType = button.dataset.storeType;
+          document.querySelectorAll("[data-store-type]").forEach(btn => btn.classList.toggle("active", btn === button));
+          buildScript();
+        });
+      });
+
+      [els.storeName, els.product, els.soldBottles, els.openedBottles, els.tables, els.isBanquet].forEach(el => {
+        el.addEventListener("input", buildScript);
+        el.addEventListener("change", buildScript);
+      });
+
+      els.isBanquet.addEventListener("change", () => {
+        els.tableField.hidden = !els.isBanquet.checked;
+        buildScript();
+      });
+
+      document.getElementById("generateBtn").addEventListener("click", buildScript);
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        els.storeName.value = "";
+        els.soldBottles.value = 0;
+        els.openedBottles.value = 0;
+        els.tables.value = 0;
+        els.isBanquet.checked = false;
+        els.tableField.hidden = true;
+        buildScript();
+      });
+
+      document.getElementById("copyBtn").addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(els.scriptOutput.value);
+        } catch (error) {
+          els.scriptOutput.focus();
+          els.scriptOutput.select();
+          document.execCommand("copy");
+        }
+        els.toast.textContent = "已复制";
+        setTimeout(() => els.toast.textContent = "", 1600);
+      });
+
+      buildScript();
+    }
+
+    init();
+  </script>
+</body>
+</html>
