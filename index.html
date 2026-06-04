@@ -398,6 +398,13 @@
             <label for="tables">宴席桌数</label>
             <input id="tables" type="number" min="0" step="1" value="0" inputmode="numeric">
           </div>
+          <div class="toggle" id="doubleFeeField" hidden>
+            <label for="isDoubleFee">看桌费翻倍</label>
+            <label class="switch" aria-label="看桌费翻倍">
+              <input id="isDoubleFee" type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
 
         <div class="actions">
@@ -491,8 +498,10 @@
       soldBottles: document.getElementById("soldBottles"),
       openedBottles: document.getElementById("openedBottles"),
       isBanquet: document.getElementById("isBanquet"),
+      isDoubleFee: document.getElementById("isDoubleFee"),
       tables: document.getElementById("tables"),
       tableField: document.getElementById("tableField"),
+      doubleFeeField: document.getElementById("doubleFeeField"),
       modeLabel: document.getElementById("modeLabel"),
       marginProfit: document.getElementById("marginProfit"),
       scanProfit: document.getElementById("scanProfit"),
@@ -517,7 +526,7 @@
       return productData.find(item => item.id === els.product.value) || productData[0];
     }
 
-    function calcBanquet(product, soldBottles, tables, enabled) {
+    function calcBanquet(product, soldBottles, tables, enabled, doubleFeeEnabled) {
       if (!enabled || tables <= 0) {
         return { amount: 0, fee: 0, tier: null, message: "本单未选择宴席奖励。" };
       }
@@ -534,14 +543,18 @@
         };
       }
 
-      const fee = tier.minTables >= 3 ? rule.bonusFee : rule.baseFee;
+      const canDouble = tables >= 3;
+      const fee = doubleFeeEnabled && canDouble ? rule.bonusFee : rule.baseFee;
       const amount = fee * tables;
       const gift = product.family === "红潭" && tables >= 15 ? `，另有${rule.extraGift}` : "";
+      const feeText = doubleFeeEnabled && canDouble
+        ? "看桌费按翻倍算"
+        : "还能拿看桌费";
       return {
         amount,
         fee,
         tier,
-        message: `${product.family}宴席${tables}桌，匹配${tier.label}规则，看桌费${fee}元/桌，宴席奖励${fee}×${tables}=${amount}元${gift}。`
+        message: `${product.family}宴席${tables}桌，${feeText}${fee}元/桌，这一场宴席额外奖励${fee}×${tables}=${amount}元${gift}。`
       };
     }
 
@@ -556,7 +569,7 @@
       const margin = product.retail - mode.cost;
       const marginProfit = margin * sold;
       const scanProfit = mode.scan * opened;
-      const banquet = calcBanquet(product, sold, tables, els.isBanquet.checked);
+      const banquet = calcBanquet(product, sold, tables, els.isBanquet.checked, els.isDoubleFee.checked);
       const total = marginProfit + scanProfit + banquet.amount;
       const perBottleIfOpened = margin + mode.scan;
       const slogan = storeType === "deposit" ? product.sloganDeposit : product.sloganRegular;
@@ -598,13 +611,17 @@
         });
       });
 
-      [els.storeName, els.product, els.soldBottles, els.openedBottles, els.tables, els.isBanquet].forEach(el => {
+      [els.storeName, els.product, els.soldBottles, els.openedBottles, els.tables, els.isBanquet, els.isDoubleFee].forEach(el => {
         el.addEventListener("input", buildScript);
         el.addEventListener("change", buildScript);
       });
 
       els.isBanquet.addEventListener("change", () => {
         els.tableField.hidden = !els.isBanquet.checked;
+        els.doubleFeeField.hidden = !els.isBanquet.checked;
+        if (!els.isBanquet.checked) {
+          els.isDoubleFee.checked = false;
+        }
         buildScript();
       });
 
@@ -615,7 +632,9 @@
         els.openedBottles.value = 0;
         els.tables.value = 0;
         els.isBanquet.checked = false;
+        els.isDoubleFee.checked = false;
         els.tableField.hidden = true;
+        els.doubleFeeField.hidden = true;
         buildScript();
       });
 
